@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Provides the primary entry-point to the AWS Encryption SDK. All encryption and decryption
@@ -65,6 +66,7 @@ import java.util.Map;
  */
 @SuppressWarnings("WeakerAccess") // this is a public API
 public class AwsCrypto {
+  private static final Logger LOGGER = Logger.getLogger(AwsCrypto.class.getName());
   private static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
 
   // These are volatile because we allow unsynchronized writes via our setters,
@@ -83,6 +85,13 @@ public class AwsCrypto {
    */
   private final int maxEncryptedDataKeys_;
 
+  private static void warn_end_of_support() {
+    LOGGER.warning(
+        "This major version (1.x) of the AWS Encryption SDK for Java has reached End-of-Support.\n"
+            + "It will no longer receive security updates or bug fixes.\n"
+            + "Consider updating to the latest version of the AWS Encryption SDK.");
+  }
+
   /**
    * @deprecated This constructor implicitly configures the Aws Crypto client with a commitment
    *     policy that allows reading encrypted messages without commitment values. Use {@link
@@ -91,11 +100,13 @@ public class AwsCrypto {
    */
   @Deprecated
   public AwsCrypto() {
+    warn_end_of_support();
     commitmentPolicy_ = CommitmentPolicy.ForbidEncryptAllowDecrypt;
     maxEncryptedDataKeys_ = CiphertextHeaders.NO_MAX_ENCRYPTED_DATA_KEYS;
   }
 
   private AwsCrypto(Builder builder) {
+    warn_end_of_support();
     if (builder.commitmentPolicy_ == null) {
       throw new IllegalArgumentException("Must specify a commitment policy on the client.");
     }
