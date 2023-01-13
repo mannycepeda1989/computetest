@@ -21,11 +21,13 @@ jobs:
           role-to-assume: ${{ secrets.CI_AWS_ROLE_ARN }}
           aws-region: us-west-2
           role-duration-seconds: 3600
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Start CodeBuild Batch Build
         run: |
-          echo 'BATCH_ID<<EOF' >> $GITHUB_ENV
-          ./.github/scripts/start_codebuild_batch.sh ${{ env.GITHUB_SHA }} >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          echo "BATCH_ID<<EOF" >> $GITHUB_ENV
+          ./.github/scripts/start_codebuild_batch.sh ${{ GITHUB_SHA }} >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
         shell: bash
       - name: Wait for CodeBuild completion
         run: ./.github/scripts/poll_build_status.sh ${{ env.BATCH_ID }}
