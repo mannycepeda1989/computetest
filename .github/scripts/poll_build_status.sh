@@ -9,7 +9,9 @@ POLL_COUNTER=0
 while [ $POLL_COUNTER -lt $BUILD_TIMEOUT_MINUTES ]; do
   BUILD_STATUS=$(aws codebuild batch-get-build-batches \
       --ids "$1" \
-      | jq '.buildBatches.buildBatchStatus')
+      | jq -r --arg BATCH_ID "$1" '.buildBatches[]
+              | select(.id == $BATCH_ID)
+              | .buildBatchStatus'
 
   echo "Build status is $BUILD_STATUS after $POLL_COUNTER minutes"
   # If build succeeds, exit 0; Github will interpret 'exit 0' as successful job run

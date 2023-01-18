@@ -6,4 +6,4 @@ aws codebuild start-build-batch \
     --region us-west-2 \
     --project-name AWS-ESDK-Java-CI \
     --source-version "$1" \
-    | jq '.buildBatch.id'
+    | jq -r '.buildBatch.id'
