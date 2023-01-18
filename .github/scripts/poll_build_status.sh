@@ -11,7 +11,7 @@ while [ $POLL_COUNTER -lt $BUILD_TIMEOUT_MINUTES ]; do
       --ids "$1" \
       | jq -r --arg BATCH_ID "$1" '.buildBatches[]
               | select(.id == $BATCH_ID)
-              | .buildBatchStatus'
+              | .buildBatchStatus' )
 
   echo "Build status is $BUILD_STATUS after $POLL_COUNTER minutes"
   # If build succeeds, exit 0; Github will interpret 'exit 0' as successful job run
