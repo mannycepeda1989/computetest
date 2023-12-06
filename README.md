@@ -58,7 +58,7 @@ You can get the latest release from Maven:
 <dependency>
   <groupId>com.amazonaws</groupId>
   <artifactId>aws-encryption-sdk-java</artifactId>
-  <version>2.4.1</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 

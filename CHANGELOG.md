@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.0.0](https://github.com/aws/aws-encryption-sdk-java/compare/v2.4.1...v3.0.0) (2023-12-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* This feature update includes a breaking change that requires AWS SDK v2 Java as a hard dependency.
+
+### Features
+
+* Integrate ESDK-Java with AWS Cryptographic Material Providers Library (MPL) for Keyring and CMM Support. ([#1864](https://github.com/aws/aws-encryption-sdk-java/issues/1864)) ([9297e1b](https://github.com/aws/aws-encryption-sdk-java/commit/9297e1bad3860301bcf52b73466ec4b762e4f817))
+
+
+### Maintenance
+
+* **CFN:** remove unused policy ([#1862](https://github.com/aws/aws-encryption-sdk-java/issues/1862)) ([43e078a](https://github.com/aws/aws-encryption-sdk-java/commit/43e078ae1a99c751dc59a354fbc2c7b70b4afd82))
+* **CFN:** update CFN stack to add managed policies to ci and release role ([#1856](https://github.com/aws/aws-encryption-sdk-java/issues/1856)) ([64c970f](https://github.com/aws/aws-encryption-sdk-java/commit/64c970f11ac7e14998c8939f937feeb48eee6c66))
+* **deps:** bump org.apache.commons:commons-lang3 from 3.12.0 to 3.13.0 ([#1717](https://github.com/aws/aws-encryption-sdk-java/issues/1717)) ([ec41ae2](https://github.com/aws/aws-encryption-sdk-java/commit/ec41ae2d492699bfbbc7d9ac477105cd2dccbabd))
+* fix release script ([#1796](https://github.com/aws/aws-encryption-sdk-java/issues/1796)) ([3617210](https://github.com/aws/aws-encryption-sdk-java/commit/3617210c1e60949aacd75f3c436b3b3010d0db71))
+* fix release-ci ([#1883](https://github.com/aws/aws-encryption-sdk-java/issues/1883)) ([92f29d0](https://github.com/aws/aws-encryption-sdk-java/commit/92f29d0c47e09807c46201bb2c100f2172c51294))
+* **tests:** update ESDK tests to replace sun.security.* API ([#1852](https://github.com/aws/aws-encryption-sdk-java/issues/1852)) ([ca4c763](https://github.com/aws/aws-encryption-sdk-java/commit/ca4c763fc8b6bf11df2914d37188aa5db5248042))
+* update release process ([#1888](https://github.com/aws/aws-encryption-sdk-java/issues/1888)) ([f222462](https://github.com/aws/aws-encryption-sdk-java/commit/f2224626ed5bb6cdc90ee6d8f8eb61f07d3422ee))
+* update the javadoc release script ([#1857](https://github.com/aws/aws-encryption-sdk-java/issues/1857)) ([1870a08](https://github.com/aws/aws-encryption-sdk-java/commit/1870a082358d59e32c60d74116d6f43c0efa466b))
+
 ## [2.4.1](https://github.com/aws/aws-encryption-sdk-java/compare/v2.4.0...v2.4.1) (2023-08-09)
 
 
