@@ -53,21 +53,25 @@ batch:
       image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
 
 # Version Project
-  - identifier: version
+#  - identifier: version
+#    depend-on:
+#      - release_staging
+#      - validate_staging_release_openjdk8
+#      - validate_staging_release_openjdk11
+#      - validate_staging_release_corretto8
+#      - validate_staging_release_corretto11
+#    buildspec: codebuild/release/version.yml
+#    env:
+#      image: aws/codebuild/standard:5.0
+
+# Publish to Maven Central
+  - identifier: publish
     depend-on:
       - release_staging
       - validate_staging_release_openjdk8
       - validate_staging_release_openjdk11
       - validate_staging_release_corretto8
       - validate_staging_release_corretto11
-    buildspec: codebuild/release/version.yml
-    env:
-      image: aws/codebuild/standard:5.0
-
-# Publish to Maven Central
-  - identifier: publish
-    depend-on:
-      - version
     buildspec: codebuild/release/release-prod.yml
 
 # Search for published Artifact
