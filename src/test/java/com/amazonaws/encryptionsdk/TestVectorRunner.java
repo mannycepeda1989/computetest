@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
@@ -333,7 +334,9 @@ public class TestVectorRunner {
                   transformation += "PKCS1Padding";
                 } else if ("oaep-mgf1".equals(padding)) {
                   final String hashName =
-                      ((String) mkEntry.get("padding-hash")).replace("sha", "sha-").toUpperCase();
+                      ((String) mkEntry.get("padding-hash"))
+                          .replace("sha", "sha-")
+                          .toUpperCase(Locale.ROOT);
                   transformation += "OAEPWith" + hashName + "AndMGF1Padding";
                 } else {
                   throw new IllegalArgumentException("Unsupported padding:" + padding);
@@ -438,7 +441,9 @@ public class TestVectorRunner {
                   transformation += "PKCS1Padding";
                 } else if ("oaep-mgf1".equals(padding)) {
                   final String hashName =
-                      ((String) mkEntry.get("padding-hash")).replace("sha", "sha-").toUpperCase();
+                      ((String) mkEntry.get("padding-hash"))
+                          .replace("sha", "sha-")
+                          .toUpperCase(Locale.ROOT);
                   transformation += "OAEPWith" + hashName + "AndMGF1Padding";
                 } else {
                   throw new IllegalArgumentException("Unsupported padding:" + padding);
@@ -544,7 +549,7 @@ public class TestVectorRunner {
                   name,
                   keyId,
                   keyType,
-                  new SecretKeySpec(Base64.decode(material), algorithm.toUpperCase()));
+                  new SecretKeySpec(Base64.decode(material), algorithm.toUpperCase(Locale.ROOT)));
           break;
         case "private":
           kf = KeyFactory.getInstance(algorithm);
