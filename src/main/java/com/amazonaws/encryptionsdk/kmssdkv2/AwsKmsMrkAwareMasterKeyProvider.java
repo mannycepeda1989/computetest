@@ -47,13 +47,13 @@ public final class AwsKmsMrkAwareMasterKeyProvider
   private final Region defaultRegion_;
 
   public static class Builder implements Cloneable {
-    private Region defaultRegion_ = getSdkDefaultRegion();
+    private Region defaultRegion_ = null;
 
     private Supplier<KmsClientBuilder> builderSupplier_ = null;
     private RegionalClientSupplier regionalClientSupplier_ = null;
 
     private DiscoveryFilter discoveryFilter_ = null;
-    private Region discoveryMrkRegion_ = this.defaultRegion_;
+    private Region discoveryMrkRegion_ = null;
 
     Builder() {
       // Default access: Don't allow outside classes to extend this class
@@ -155,6 +155,10 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      * @see KmsMasterKeyProvider.Builder#buildDiscovery()
      */
     public AwsKmsMrkAwareMasterKeyProvider buildDiscovery() {
+      if (defaultRegion_ == null) {
+        defaultRegion_ = getSdkDefaultRegion();
+      }
+
       final boolean isDiscovery = true;
 
       // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.6
@@ -208,6 +212,10 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      * @see KmsMasterKeyProvider.Builder#buildStrict(List)
      */
     public AwsKmsMrkAwareMasterKeyProvider buildStrict(List<String> keyIds) {
+      if (defaultRegion_ == null) {
+        defaultRegion_ = getSdkDefaultRegion();
+      }
+
       final boolean isDiscovery = false;
 
       RegionalClientSupplier clientSupplier = regionalClientSupplier_;
