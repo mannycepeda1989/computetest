@@ -12,7 +12,6 @@ import static org.mockito.Mockito.spy;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.encryptionsdk.*;
-import com.amazonaws.encryptionsdk.exception.AwsCryptoException;
 import com.amazonaws.encryptionsdk.exception.CannotUnwrapDataKeyException;
 import com.amazonaws.encryptionsdk.exception.NoSuchMasterKeyException;
 import com.amazonaws.encryptionsdk.exception.UnsupportedProviderException;
@@ -225,33 +224,23 @@ public class AwsKmsMrkAwareMasterKeyProviderTest {
 
     @Test
     public void always_need_a_region() {
-      assertThrows(
-          AwsCryptoException.class,
-          () ->
-              AwsKmsMrkAwareMasterKeyProvider.builder()
-                  .withDefaultRegion(null)
-                  .buildStrict("mrk-edb7fe6942894d32ac46dbb1c922d574"));
-
       AwsKmsMrkAwareMasterKeyProvider.builder()
-          .withDefaultRegion("us-east-1")
+          // If default region is set to `null` or not configured
+          // it will pick one up from the environment
+          .withDefaultRegion(null)
           .buildStrict("mrk-edb7fe6942894d32ac46dbb1c922d574");
     }
 
     @Test
-    // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.6
-    // = type=test
-    // # If an AWS SDK Default Region can not be
-    // # obtained initialization MUST fail.
     public void discovery_region_can_not_be_null() {
-      assertThrows(
-          IllegalArgumentException.class,
-          () ->
-              AwsKmsMrkAwareMasterKeyProvider.builder()
-                  // need to force the default region to `null`
-                  // otherwise it may pick one up from the environment.
-                  .withDefaultRegion(null)
-                  .withDiscoveryMrkRegion(null)
-                  .buildDiscovery());
+      AwsKmsMrkAwareMasterKeyProvider.builder()
+          // If default region is set to `null` or not configured
+          // it will pick one up from the environment
+          .withDefaultRegion(null)
+          // In discovery mode if a default MRK Region is not configured the AWS SDK
+          // Default Region MUST be used.
+          .withDiscoveryMrkRegion(null)
+          .buildDiscovery();
     }
 
     @Test
