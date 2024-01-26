@@ -192,14 +192,8 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      * @see KmsMasterKeyProvider.Builder#buildDiscovery()
      */
     public AwsKmsMrkAwareMasterKeyProvider buildDiscovery() {
-      String sdkDefaultRegion = getSdkDefaultRegion();
-
       if (defaultRegion_ == null) {
-        defaultRegion_ = sdkDefaultRegion;
-      }
-
-      if (discoveryMrkRegion_ == null) {
-        discoveryMrkRegion_ = sdkDefaultRegion;
+        defaultRegion_ = getSdkDefaultRegion();
       }
 
       final boolean isDiscovery = true;
@@ -251,14 +245,8 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      * @see KmsMasterKeyProvider.Builder#buildStrict(List)
      */
     public AwsKmsMrkAwareMasterKeyProvider buildStrict(List<String> keyIds) {
-      String sdkDefaultRegion = getSdkDefaultRegion();
-
       if (defaultRegion_ == null) {
-        defaultRegion_ = sdkDefaultRegion;
-      }
-
-      if (discoveryMrkRegion_ == null) {
-        discoveryMrkRegion_ = sdkDefaultRegion;
+        defaultRegion_ = getSdkDefaultRegion();
       }
 
       final boolean isDiscovery = false;
