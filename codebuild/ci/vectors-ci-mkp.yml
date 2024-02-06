@@ -30,4 +30,4 @@ phases:
       - cd $CODEBUILD_SRC_DIR
   build:
     commands:
-      - mvn install -T 8 -Dgpg.skip=true -ntp "-Dtest=TestVectorRunner" "-Dmasterkey=true" "-DtestVectorZip=file://$CODEBUILD_SRC_DIR/src/test/resources/aws-encryption-sdk-test-vectors/vectors/awses-decrypt/python-2.3.0.zip"
+      - mvn -B -ntp install -Dgpg.skip=true -Djacoco.skip=true "-Dtest=TestVectorRunner" "-Dmasterkey=true" "-DtestVectorZip=file://$CODEBUILD_SRC_DIR/src/test/resources/aws-encryption-sdk-test-vectors/vectors/awses-decrypt/python-2.3.0.zip"

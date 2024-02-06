@@ -503,7 +503,7 @@ public class TestVectorRunner {
                   transformation += "PKCS1Padding";
                 } else if ("oaep-mgf1".equals(padding)) {
                   final String hashName =
-                      ((String) mkEntry.get("padding-hash")).replace("sha", "sha-").toUpperCase();
+                      ((String) mkEntry.get("padding-hash")).replace("sha", "sha-").toUpperCase(Locale.ROOT);
                   transformation += "OAEPWith" + hashName + "AndMGF1Padding";
                 } else {
                   throw new IllegalArgumentException("Unsupported padding:" + padding);
