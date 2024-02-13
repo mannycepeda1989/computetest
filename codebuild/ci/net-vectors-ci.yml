@@ -35,6 +35,4 @@ phases:
       - curl -s --output $VECTOR_ZIP --location $VECTORS_URL
   build:
     commands:
-      # Fetch awses-decrypt/python-2.3.0.zip
-      - VECTOR_DIR=$CODEBUILD_SRC_DIR/src/test/resources
       - mvn -B -ntp install -Dgpg.skip=true -Djacoco.skip=true "-Dtest=TestVectorRunner" "-DtestVectorZip=file://$VECTOR_ZIP"
