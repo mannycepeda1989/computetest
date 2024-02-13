@@ -29,7 +29,7 @@ jobs:
           compute-type-override: BUILD_GENERAL1_MEDIUM
           image-override: aws/codebuild/amazonlinux2-x86_64-standard:3.0
   vectorTests:
-    name: Vector Tests Keyrings
+    name: Vector Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true

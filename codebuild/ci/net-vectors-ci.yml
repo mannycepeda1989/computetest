@@ -28,13 +28,15 @@ phases:
       - cd submodules/MaterialProviders/TestVectorsAwsCryptographicMaterialProviders/
       - make build_java && make mvn_local_deploy
       - cd $CODEBUILD_SRC_DIR
+
+      # Fetch ESDK .NET v4.0.1 Test Vectors
+      - VECTOR_ZIP=$CODEBUILD_SRC_DIR/v4-Net-4.0.1.zip
+      - VECTORS_URL=https://github.com/awslabs/aws-encryption-sdk-test-vectors/raw/master/vectors/awses-decrypt/python-2.3.0.zip
+      - curl --no-progress-meter --output $VECTOR_ZIP --location $VECTORS_URL
   build:
     commands:
+      # Fetch awses-decrypt/python-2.3.0.zip
       - VECTOR_DIR=$CODEBUILD_SRC_DIR/src/test/resources
-      - echo "Debug ls vector_dir:\n" $(ls $VECTOR_DIR)
-      - echo "Testing against v2 Manifest from ESDK-NET v4.0.1"
-      - >-
-        mvn surefire-report:report "-Dtest=TestVectorRunner" -T 8 -Dgpg.skip=true -ntp "-DtestVectorZip=file://$VECTOR_DIR/v2Net4.0.1.zip" "-DoutputName=v2Net4_0_1.html"
-      - echo "Testing against v4 Manifest from ESDK-NET v4.0.1"
-      - >- 
-        mvn surefire-report:report "-Dtest=TestVectorRunner" -T 8 -Dgpg.skip=true -ntp "-DtestVectorZip=file://$VECTOR_DIR/v4Net4.0.1.zip" "-DoutputName=v4Net4_0_1.html"
+      - mvn -B -ntp install -Dgpg.skip=true -Djacoco.skip=true \
+        "-Dtest=TestVectorRunner" \
+        "-DtestVectorZip=file://$VECTOR_ZIP"
