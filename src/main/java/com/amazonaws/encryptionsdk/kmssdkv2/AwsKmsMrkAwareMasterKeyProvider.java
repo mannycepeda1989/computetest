@@ -352,7 +352,8 @@ public final class AwsKmsMrkAwareMasterKeyProvider
     }
 
     this.regionalClientSupplier_ = supplier;
-    // NPE would be thrown via result of extractRegion passed to KMS Client request around line 550.
+    // Null Pointer Exception (NPE) would be thrown
+    // via result of extractRegion passed to KMS Client request around line 550.
     // We could refactor extractRegion to handle Strict and Discovery separately,
     // which would allow us to avoid this potentially un-needed new
     // DefaultAwsRegionProviderChain().getRegion()
