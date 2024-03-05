@@ -194,7 +194,8 @@ public final class AwsKmsMrkAwareMasterKeyProvider
     public AwsKmsMrkAwareMasterKeyProvider buildDiscovery() {
       final boolean isDiscovery = true;
       if (discoveryMrkRegion_ == null) {
-        // The AWS SDK has a default process for evaluating the default Region. This returns null if no
+        // The AWS SDK has a default process for evaluating the default Region. This returns null if
+        // no
         // default region is found. Because a default region _may_ not be needed.
         // Note: Final Null check is at
         // com.amazonaws.encryptionsdk.kms.AwsKmsMrkAwareMasterKeyProvider#AwsKmsMrkAwareMasterKeyProvider#L417
@@ -203,9 +204,12 @@ public final class AwsKmsMrkAwareMasterKeyProvider
           // # In
           // # discovery mode if a default MRK Region is not configured the AWS SDK
           // # Default Region MUST be used.
-          discoveryMrkRegion_ = new com.amazonaws.regions.DefaultAwsRegionProviderChain().getRegion();
+          discoveryMrkRegion_ =
+              new com.amazonaws.regions.DefaultAwsRegionProviderChain().getRegion();
         } catch (SdkClientException ex) {
-          throw new AwsCryptoException("DiscoveryMrkRegion was not set and Default AWS Region Provider Chain could not load one.", ex);
+          throw new AwsCryptoException(
+              "DiscoveryMrkRegion was not set and Default AWS Region Provider Chain could not load one.",
+              ex);
         }
       }
 
@@ -421,17 +425,21 @@ public final class AwsKmsMrkAwareMasterKeyProvider
     this.regionalClientSupplier_ = supplier;
     // NPE would be thrown via result of extractRegion passed to KMS Client request around line 583.
     // We could refactor extractRegion to handle Strict and Discovery separately,
-    // which would allow us to avoid this potentially un-needed new DefaultAwsRegionProviderChain().getRegion()
+    // which would allow us to avoid this potentially un-needed new
+    // DefaultAwsRegionProviderChain().getRegion()
     // call.
     // Otherwise, we have to have the call.
     if (defaultRegion == null) {
       try {
         defaultRegion = new com.amazonaws.regions.DefaultAwsRegionProviderChain().getRegion();
         if (defaultRegion == null) {
-          throw new AwsCryptoException("Default Region was not set and Default AWS Region Provider Chain could not load one.");
+          throw new AwsCryptoException(
+              "Default Region was not set and Default AWS Region Provider Chain could not load one.");
         }
       } catch (SdkClientException ex) {
-        throw new AwsCryptoException("Default Region was not set and Default AWS Region Provider Chain could not load one.", ex);
+        throw new AwsCryptoException(
+            "Default Region was not set and Default AWS Region Provider Chain could not load one.",
+            ex);
       }
     }
     this.defaultRegion_ = defaultRegion;

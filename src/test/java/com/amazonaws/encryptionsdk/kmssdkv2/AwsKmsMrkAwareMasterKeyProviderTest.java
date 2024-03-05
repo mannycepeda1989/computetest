@@ -238,11 +238,11 @@ public class AwsKmsMrkAwareMasterKeyProviderTest {
     @DisplayName("Precondition: A region is required to contact AWS KMS.")
     public void always_need_a_region() {
       assertThrows(
-              AwsCryptoException.class,
-              () ->
-                      AwsKmsMrkAwareMasterKeyProvider.builder()
-                              .defaultRegion(null)
-                              .buildStrict("mrk-edb7fe6942894d32ac46dbb1c922d574"));
+          AwsCryptoException.class,
+          () ->
+              AwsKmsMrkAwareMasterKeyProvider.builder()
+                  .defaultRegion(null)
+                  .buildStrict("mrk-edb7fe6942894d32ac46dbb1c922d574"));
       AwsKmsMrkAwareMasterKeyProvider.builder()
           .defaultRegion(Region.US_EAST_1)
           .buildStrict("mrk-edb7fe6942894d32ac46dbb1c922d574");
@@ -255,14 +255,14 @@ public class AwsKmsMrkAwareMasterKeyProviderTest {
     // # obtained initialization MUST fail.
     public void discovery_region_can_not_be_null() {
       assertThrows(
-              AwsCryptoException.class,
-              () ->
-                      AwsKmsMrkAwareMasterKeyProvider.builder()
-                              // need to force the default region to `null`
-                              // otherwise it may pick one up from the environment.
-                              .defaultRegion(null)
-                              .discoveryMrkRegion(null)
-                              .buildDiscovery());
+          AwsCryptoException.class,
+          () ->
+              AwsKmsMrkAwareMasterKeyProvider.builder()
+                  // need to force the default region to `null`
+                  // otherwise it may pick one up from the environment.
+                  .defaultRegion(null)
+                  .discoveryMrkRegion(null)
+                  .buildDiscovery());
     }
 
     @Test

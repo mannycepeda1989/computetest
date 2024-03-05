@@ -19,14 +19,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.5
 // # MUST implement the Master Key Provider Interface (../master-key-
@@ -169,7 +168,8 @@ public final class AwsKmsMrkAwareMasterKeyProvider
       }
 
       if (discoveryMrkRegion_ == null) {
-        // The AWS SDK has a default process for evaluating the default Region. This returns null if no
+        // The AWS SDK has a default process for evaluating the default Region. This returns null if
+        // no
         // default region is found. Because a default region _may_ not be needed.
         // Note: Final Null check is at
         // com.amazonaws.encryptionsdk.kmssdkv2.AwsKmsMrkAwareMasterKeyProvider#AwsKmsMrkAwareMasterKeyProvider#L355
@@ -180,7 +180,9 @@ public final class AwsKmsMrkAwareMasterKeyProvider
           // # Default Region MUST be used.
           discoveryMrkRegion_ = new DefaultAwsRegionProviderChain().getRegion();
         } catch (SdkClientException ex) {
-          throw new AwsCryptoException("DiscoveryMrkRegion was not set and Default AWS Region Provider Chain could not load one.", ex);
+          throw new AwsCryptoException(
+              "DiscoveryMrkRegion was not set and Default AWS Region Provider Chain could not load one.",
+              ex);
         }
       }
 
@@ -352,17 +354,21 @@ public final class AwsKmsMrkAwareMasterKeyProvider
     this.regionalClientSupplier_ = supplier;
     // NPE would be thrown via result of extractRegion passed to KMS Client request around line 550.
     // We could refactor extractRegion to handle Strict and Discovery separately,
-    // which would allow us to avoid this potentially un-needed new DefaultAwsRegionProviderChain().getRegion()
+    // which would allow us to avoid this potentially un-needed new
+    // DefaultAwsRegionProviderChain().getRegion()
     // call.
     // Otherwise, we have to have the call.
     if (defaultRegion == null) {
       try {
         defaultRegion = new DefaultAwsRegionProviderChain().getRegion();
         if (defaultRegion == null) {
-          throw new AwsCryptoException("Default Region was not set and Default AWS Region Provider Chain could not load one.");
+          throw new AwsCryptoException(
+              "Default Region was not set and Default AWS Region Provider Chain could not load one.");
         }
       } catch (SdkClientException ex) {
-        throw new AwsCryptoException("Default Region was not set and Default AWS Region Provider Chain could not load one.", ex);
+        throw new AwsCryptoException(
+            "Default Region was not set and Default AWS Region Provider Chain could not load one.",
+            ex);
       }
     }
     this.defaultRegion_ = defaultRegion;
@@ -520,7 +526,7 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      */
     if (isDiscovery_ && requestedKeyArnInfo == null) {
       throw new NoSuchMasterKeyException(
-              // Note: This exception does not make sense to me
+          // Note: This exception does not make sense to me
           "Cannot use AWS KMS identifiers " + "when in discovery mode.");
     }
     // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.7
@@ -577,7 +583,8 @@ public final class AwsKmsMrkAwareMasterKeyProvider
    *
    * <p>Refactored into a pure function to facilitate testing and ensure correctness.
    */
-  @Nonnull static Region extractRegion(
+  @Nonnull
+  static Region extractRegion(
       @Nonnull final Region defaultRegion,
       final Region discoveryMrkRegion,
       final Optional<String> matchedArn,
