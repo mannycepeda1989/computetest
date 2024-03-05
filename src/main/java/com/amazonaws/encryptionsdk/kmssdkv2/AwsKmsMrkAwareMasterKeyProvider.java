@@ -25,6 +25,9 @@ import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.5
 // # MUST implement the Master Key Provider Interface (../master-key-
 // # provider-interface.md#interface)
@@ -155,10 +158,6 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      * @see KmsMasterKeyProvider.Builder#buildDiscovery()
      */
     public AwsKmsMrkAwareMasterKeyProvider buildDiscovery() {
-      if (defaultRegion_ == null) {
-        defaultRegion_ = getSdkDefaultRegion();
-      }
-
       final boolean isDiscovery = true;
 
       // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.6
@@ -167,6 +166,22 @@ public final class AwsKmsMrkAwareMasterKeyProvider
       RegionalClientSupplier clientSupplier = regionalClientSupplier_;
       if (clientSupplier == null) {
         clientSupplier = clientFactory(new ConcurrentHashMap<>(), builderSupplier_);
+      }
+
+      if (discoveryMrkRegion_ == null) {
+        // The AWS SDK has a default process for evaluating the default Region. This returns null if no
+        // default region is found. Because a default region _may_ not be needed.
+        // Note: Final Null check is at
+        // com.amazonaws.encryptionsdk.kmssdkv2.AwsKmsMrkAwareMasterKeyProvider#AwsKmsMrkAwareMasterKeyProvider#L355
+        try {
+          // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.6
+          // # In
+          // # discovery mode if a default MRK Region is not configured the AWS SDK
+          // # Default Region MUST be used.
+          discoveryMrkRegion_ = new DefaultAwsRegionProviderChain().getRegion();
+        } catch (SdkClientException ex) {
+          throw new AwsCryptoException("DiscoveryMrkRegion was not set and Default AWS Region Provider Chain could not load one.", ex);
+        }
       }
 
       return new AwsKmsMrkAwareMasterKeyProvider(
@@ -178,11 +193,7 @@ public final class AwsKmsMrkAwareMasterKeyProvider
           emptyList(),
           isDiscovery,
           discoveryFilter_,
-          // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.6
-          // # In
-          // # discovery mode if a default MRK Region is not configured the AWS SDK
-          // # Default Region MUST be used.
-          discoveryMrkRegion_ == null ? defaultRegion_ : discoveryMrkRegion_);
+          discoveryMrkRegion_);
     }
 
     /**
@@ -195,7 +206,6 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      */
     public AwsKmsMrkAwareMasterKeyProvider buildDiscovery(DiscoveryFilter filter) {
       discoveryFilter_ = filter;
-
       return buildDiscovery();
     }
 
@@ -212,10 +222,6 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      * @see KmsMasterKeyProvider.Builder#buildStrict(List)
      */
     public AwsKmsMrkAwareMasterKeyProvider buildStrict(List<String> keyIds) {
-      if (defaultRegion_ == null) {
-        defaultRegion_ = getSdkDefaultRegion();
-      }
-
       final boolean isDiscovery = false;
 
       RegionalClientSupplier clientSupplier = regionalClientSupplier_;
@@ -281,18 +287,6 @@ public final class AwsKmsMrkAwareMasterKeyProvider
         return cacher.setClient(client);
       };
     }
-
-    /**
-     * The AWS SDK has a default process for evaluating the default Region. This returns null if no
-     * default region is found. Because a default region _may_ not be needed.
-     */
-    private static Region getSdkDefaultRegion() {
-      try {
-        return new DefaultAwsRegionProviderChain().getRegion();
-      } catch (SdkClientException ex) {
-        return null;
-      }
-    }
   }
 
   public static Builder builder() {
@@ -303,12 +297,12 @@ public final class AwsKmsMrkAwareMasterKeyProvider
   // # On initialization the caller MUST provide:
   private AwsKmsMrkAwareMasterKeyProvider(
       RegionalClientSupplier supplier,
-      Region defaultRegion,
+      @Nullable Region defaultRegion,
       List<String> keyIds,
       List<String> grantTokens,
       boolean isDiscovery,
       DiscoveryFilter discoveryFilter,
-      Region discoveryMrkRegion) {
+      @Nullable Region discoveryMrkRegion) {
     // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.6
     // # The key id list MUST NOT be empty or null in strict mode.
     if (!isDiscovery && (keyIds == null || keyIds.isEmpty())) {
@@ -356,6 +350,21 @@ public final class AwsKmsMrkAwareMasterKeyProvider
     }
 
     this.regionalClientSupplier_ = supplier;
+    // NPE would be thrown via result of extractRegion passed to KMS Client request around line 550.
+    // We could refactor extractRegion to handle Strict and Discovery separately,
+    // which would allow us to avoid this potentially un-needed new DefaultAwsRegionProviderChain().getRegion()
+    // call.
+    // Otherwise, we have to have the call.
+    if (defaultRegion == null) {
+      try {
+        defaultRegion = new DefaultAwsRegionProviderChain().getRegion();
+        if (defaultRegion == null) {
+          throw new AwsCryptoException("Default Region was not set and Default AWS Region Provider Chain could not load one.");
+        }
+      } catch (SdkClientException ex) {
+        throw new AwsCryptoException("Default Region was not set and Default AWS Region Provider Chain could not load one.", ex);
+      }
+    }
     this.defaultRegion_ = defaultRegion;
     this.keyIds_ = Collections.unmodifiableList(new ArrayList<>(keyIds));
 
@@ -511,6 +520,7 @@ public final class AwsKmsMrkAwareMasterKeyProvider
      */
     if (isDiscovery_ && requestedKeyArnInfo == null) {
       throw new NoSuchMasterKeyException(
+              // Note: This exception does not make sense to me
           "Cannot use AWS KMS identifiers " + "when in discovery mode.");
     }
     // = compliance/framework/aws-kms/aws-kms-mrk-aware-master-key-provider.txt#2.7
@@ -567,8 +577,8 @@ public final class AwsKmsMrkAwareMasterKeyProvider
    *
    * <p>Refactored into a pure function to facilitate testing and ensure correctness.
    */
-  static Region extractRegion(
-      final Region defaultRegion,
+  @Nonnull static Region extractRegion(
+      @Nonnull final Region defaultRegion,
       final Region discoveryMrkRegion,
       final Optional<String> matchedArn,
       final AwsKmsCmkArnInfo requestedKeyArnInfo,
