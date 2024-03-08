@@ -35,4 +35,5 @@ phases:
       - curl -s --output $VECTOR_ZIP --location $VECTORS_URL
   build:
     commands:
+      # NOTE: We need to pass the absolute path of the vectors
       - mvn -B -ntp install -Dgpg.skip=true -Djacoco.skip=true "-Dtest=TestVectorRunner" "-DtestVectorZip=file://$VECTOR_ZIP"
