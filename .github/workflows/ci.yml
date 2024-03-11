@@ -58,7 +58,7 @@ jobs:
           env-vars-for-codebuild: JAVA_ENV_VERSION
         env:
           JAVA_ENV_VERSION: ${{ matrix.platform.distribution }}${{ matrix.version }}
-  vectorTestsMasterKey:
+  vectorTestsMasterKeyProvider:
     name: Vector Tests MasterKeyProvider
     runs-on: ubuntu-latest
     strategy:
