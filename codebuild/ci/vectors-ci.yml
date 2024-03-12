@@ -1,5 +1,5 @@
 version: 0.2
-
+# Runs "Golden Manifest" against Keyrings
 phases:
   install:
     runtime-versions:
