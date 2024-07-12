@@ -65,3 +65,6 @@ Resources:
             }
           ]
         }
+      Tags:
+        - Key: git_org
+          Value: mannycepeda1989
