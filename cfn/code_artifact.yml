@@ -30,15 +30,22 @@ Resources:
     Condition: CreateDomain
     Properties:
       DomainName: !Ref DomainName
-
+      Tags:
+        - Key: Nikhil_test_azure10
+          Value: PR_JK
   CIRepo:
     Type: AWS::CodeArtifact::Repository
     Properties:
       DomainName: !Ref DomainName
       RepositoryName: !Sub "${RepositoryName}-ci"
-
+      Tags:
+        - Key: Nikhil_test_azure10
+          Value: PR_JK
   StagingRepo:
     Type: AWS::CodeArtifact::Repository
     Properties:
       DomainName: !Ref DomainName
       RepositoryName: !Sub "${RepositoryName}-staging"
+      Tags:
+        - Key: Nikhil_test_azure10
+          Value: PR_JK
